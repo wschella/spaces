@@ -85,8 +85,12 @@ pub trait BoundedSpace: Space where Self::Value: PartialOrd {
 
 /// Trait for defining spaces containing a finite set of values.
 pub trait FiniteSpace: BoundedSpace where Self::Value: PartialOrd {
+    type Values: ::std::iter::ExactSizeIterator;
+
     /// Returns the finite range of values contained by this space.
     fn range(&self) -> ::std::ops::Range<Self::Value>;
+
+    fn values(&self) -> Self::Values;
 }
 
 /// Trait for types that implement a mapping from values of one set onto another.

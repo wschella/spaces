@@ -80,7 +80,11 @@ impl BoundedSpace for Equipartition {
 }
 
 impl FiniteSpace for Equipartition {
+    type Values = Range<Self::Value>;
+
     fn range(&self) -> Range<Self::Value> { 0..self.n_partitions }
+
+    fn values(&self) -> Self::Values { self.range() }
 }
 
 impl Surjection<f64, usize> for Equipartition {

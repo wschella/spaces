@@ -36,7 +36,11 @@ impl BoundedSpace for Ordinal {
 }
 
 impl FiniteSpace for Ordinal {
+    type Values = std::ops::Range<Self::Value>;
+    
     fn range(&self) -> Range<Self::Value> { 0..self.0 }
+
+    fn values(&self) -> Self::Values { (0..self.0).into_iter() }
 }
 
 impl Union for Ordinal {

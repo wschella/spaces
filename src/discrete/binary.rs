@@ -23,7 +23,11 @@ impl BoundedSpace for Binary {
 }
 
 impl FiniteSpace for Binary {
+    type Values = std::vec::IntoIter<bool>;
+
     fn range(&self) -> Range<Self::Value> { false..true }
+
+    fn values(&self) -> Self::Values { vec![false, true].into_iter() }
 }
 
 impl_union_intersect!(Binary, Binary);
