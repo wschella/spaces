@@ -36,6 +36,18 @@ impl BoundedSpace for Ordinal {
 }
 
 impl FiniteSpace for Ordinal {
+}
+
+impl IntoIterator for Ordinal {
+    type Item = <Self as Space>::Value;
+    type IntoIter = std::ops::Range<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.range()
+    }
+}
+
+impl FiniteOrderedSpace for Ordinal {
     fn range(&self) -> Range<Self::Value> { 0..self.0 }
 }
 

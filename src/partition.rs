@@ -80,6 +80,18 @@ impl BoundedSpace for Equipartition {
 }
 
 impl FiniteSpace for Equipartition {
+}
+
+impl IntoIterator for Equipartition {
+    type Item = <Self as Space>::Value;
+    type IntoIter = std::ops::Range<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.range()
+    }
+}
+
+impl FiniteOrderedSpace for Equipartition {
     fn range(&self) -> Range<Self::Value> { 0..self.n_partitions }
 }
 

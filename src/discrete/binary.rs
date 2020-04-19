@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::{fmt, ops::Range};
+use std::{fmt};
 
 /// Type representing binary (base-2) values.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -23,7 +23,15 @@ impl BoundedSpace for Binary {
 }
 
 impl FiniteSpace for Binary {
-    fn range(&self) -> Range<Self::Value> { false..true }
+}
+
+impl IntoIterator for Binary {
+    type Item = <Self as Space>::Value;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        vec![false, true].into_iter()
+    }
 }
 
 impl_union_intersect!(Binary, Binary);
@@ -70,14 +78,6 @@ mod tests {
 
         assert!(d.contains(false));
         assert!(d.contains(true));
-    }
-
-    #[test]
-    fn test_range() {
-        let d = Binary;
-        let r = d.range();
-
-        assert!(r == (false..true) || r == (true..false));
     }
 
     #[test]

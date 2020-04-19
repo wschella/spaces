@@ -17,8 +17,8 @@ mod macros;
 import_all!(dim);
 import_all!(card);
 
-pub mod real;
 pub mod discrete;
+pub mod real;
 
 import_all!(empty);
 import_all!(interval);
@@ -43,17 +43,25 @@ pub trait Space {
 impl<D: Space> Space for Box<D> {
     type Value = D::Value;
 
-    fn dim(&self) -> Dim { (**self).dim() }
+    fn dim(&self) -> Dim {
+        (**self).dim()
+    }
 
-    fn card(&self) -> Card { (**self).card() }
+    fn card(&self) -> Card {
+        (**self).card()
+    }
 }
 
 impl<'a, D: Space> Space for &'a D {
     type Value = D::Value;
 
-    fn dim(&self) -> Dim { (**self).dim() }
+    fn dim(&self) -> Dim {
+        (**self).dim()
+    }
 
-    fn card(&self) -> Card { (**self).card() }
+    fn card(&self) -> Card {
+        (**self).card()
+    }
 }
 
 /// Trait for defining spaces with at least one finite bound.
@@ -61,7 +69,10 @@ impl<'a, D: Space> Space for &'a D {
 /// Note: If both `inf` and `sup` are well defined (i.e. are not None), then the interval is
 /// totally bounded and we have a compact space; this is true in `spaces` as bounds are treated as
 /// closed.
-pub trait BoundedSpace: Space where Self::Value: PartialOrd {
+pub trait BoundedSpace: Space
+where
+    Self::Value: PartialOrd,
+{
     /// Returns the value of the dimension's infimum, if it exists.
     fn inf(&self) -> Option<Self::Value>;
 
@@ -72,19 +83,33 @@ pub trait BoundedSpace: Space where Self::Value: PartialOrd {
     fn contains(&self, val: Self::Value) -> bool;
 
     /// Returns true iff `self` has a finite infimum.
-    fn is_left_bounded(&self) -> bool { self.inf().is_some() }
+    fn is_left_bounded(&self) -> bool {
+        self.inf().is_some()
+    }
 
     /// Returns true iff `self` has a finite supremum.
-    fn is_right_bounded(&self) -> bool { self.sup().is_some() }
+    fn is_right_bounded(&self) -> bool {
+        self.sup().is_some()
+    }
 
     /// Returns true iff `self` has finite bounds in both directions.
     ///
     /// Note: this trait assumed closedness, so compactness follows.
-    fn is_compact(&self) -> bool { self.is_left_bounded() && self.is_right_bounded() }
+    fn is_compact(&self) -> bool {
+        self.is_left_bounded() && self.is_right_bounded()
+    }
 }
 
 /// Trait for defining spaces containing a finite set of values.
-pub trait FiniteSpace: BoundedSpace where Self::Value: PartialOrd {
+/// This does not imply the space is ordered.
+pub trait FiniteSpace: Space + IntoIterator<Item = <Self as Space>::Value> {
+    /// The the number of elements in the set compromising the space.
+    fn card_finite(&self) -> usize {
+        self.card().into()
+    }
+}
+/// Trait for defining spaces containing a finite set of values.
+pub trait FiniteOrderedSpace: FiniteSpace where Self::Value: PartialOrd {
     /// Returns the finite range of values contained by this space.
     fn range(&self) -> ::std::ops::Range<Self::Value>;
 }
@@ -106,8 +131,13 @@ pub trait Union<S = Self> {
     fn union(self, other: &S) -> Self;
 
     /// Return the smallest space enclosing `self` and all `other_spaces` of type `Self`.
-    fn union_many(self, other_spaces: &[S]) -> Self where Self: Sized {
-        other_spaces.into_iter().fold(self, |acc, other_space| acc.union(other_space))
+    fn union_many(self, other_spaces: &[S]) -> Self
+    where
+        Self: Sized,
+    {
+        other_spaces
+            .into_iter()
+            .fold(self, |acc, other_space| acc.union(other_space))
     }
 }
 
@@ -120,15 +150,16 @@ pub trait Intersection<S = Self> {
     fn intersect(self, other: &S) -> Self;
 
     /// Return the smallest space enclosing `self` and all `other_spaces` of type `Self`.
-    fn intersect_many(self, other_spaces: &[S]) -> Self where Self: Sized {
-        other_spaces.into_iter().fold(self, |acc, other_space| acc.intersect(other_space))
+    fn intersect_many(self, other_spaces: &[S]) -> Self
+    where
+        Self: Sized,
+    {
+        other_spaces
+            .into_iter()
+            .fold(self, |acc, other_space| acc.intersect(other_space))
     }
 }
 
 mod prelude {
-    pub use super::{
-        Space, BoundedSpace, FiniteSpace,
-        Surjection, Union, Intersection,
-        Dim, Card,
-    };
+    pub use super::{BoundedSpace, Card, Dim, FiniteSpace, FiniteOrderedSpace, Intersection, Space, Surjection, Union};
 }
