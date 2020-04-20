@@ -80,6 +80,11 @@ impl BoundedSpace for Equipartition {
 }
 
 impl FiniteSpace for Equipartition {
+    type Iter = Self::IntoIter;
+
+    fn iter(&self) -> Self::Iter {
+        self.clone().into_iter()
+    }
 }
 
 impl IntoIterator for Equipartition {

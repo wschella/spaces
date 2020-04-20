@@ -36,6 +36,11 @@ impl BoundedSpace for Ordinal {
 }
 
 impl FiniteSpace for Ordinal {
+    type Iter = Self::IntoIter;
+
+    fn iter(&self) -> Self::Iter {
+        self.clone().into_iter()
+    }
 }
 
 impl IntoIterator for Ordinal {

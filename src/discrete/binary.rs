@@ -23,6 +23,11 @@ impl BoundedSpace for Binary {
 }
 
 impl FiniteSpace for Binary {
+    type Iter = Self::IntoIter;
+
+    fn iter(&self) -> Self::Iter {
+        self.clone().into_iter()
+    }
 }
 
 impl IntoIterator for Binary {

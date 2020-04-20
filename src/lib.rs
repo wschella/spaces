@@ -103,13 +103,19 @@ where
 /// Trait for defining spaces containing a finite set of values.
 /// This does not imply the space is ordered.
 pub trait FiniteSpace: Space + IntoIterator<Item = <Self as Space>::Value> {
+    type Iter: Iterator<Item = Self::Value>;
+
     /// The the number of elements in the set compromising the space.
     fn card_finite(&self) -> usize {
         self.card().into()
     }
+
+    fn iter(&self) -> Self::Iter;
 }
+
+
 /// Trait for defining spaces containing a finite set of values.
-pub trait FiniteOrderedSpace: FiniteSpace where Self::Value: PartialOrd {
+pub trait FiniteOrderedSpace: FiniteSpace where Self::Value: PartialOrd     {
     /// Returns the finite range of values contained by this space.
     fn range(&self) -> ::std::ops::Range<Self::Value>;
 }
@@ -161,5 +167,5 @@ pub trait Intersection<S = Self> {
 }
 
 mod prelude {
-    pub use super::{BoundedSpace, Card, Dim, FiniteSpace, FiniteOrderedSpace, Intersection, Space, Surjection, Union};
+    pub use super::{BoundedSpace, Card, Dim, FiniteOrderedSpace, FiniteSpace, Intersection, Space, Surjection, Union};
 }
